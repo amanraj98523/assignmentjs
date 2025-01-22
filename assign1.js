@@ -30,22 +30,25 @@ question:-1
 
 question:- 2
 
+
 function flattenObject(obj, parentKey = "") {
-  const result = {};
-
-  for (const key in obj) {
-    const newKey = parentKey ? `${parentKey}.${key}` : key;
-    if (typeof obj[key] === "object" && obj[key] !== null) {
-      Object.assign(result, flattenObject(obj[key], newKey));
-    } else {
-      
-      result[newKey] = obj[key];
+  const finalObj = {};
+  
+  const generateFlatObjects = (obj, parent) => {
+    for (let key in obj) {
+      const newParent = parent ? `${parent}.${key}` : key; 
+      const value = obj[key];
+      if (typeof value === 'object' && value !== null) { 
+        generateFlatObjects(value, newParent);
+      } else {
+        finalObj[newParent] = value;
+      }
     }
-  }
-
-  return result;
+  };
+  
+  generateFlatObjects(obj, parentKey);
+  return finalObj;
 }
-
 
 const input = {
   user: {
@@ -61,7 +64,7 @@ const input = {
   status: "active"
 };
 
-console.log(flattenObject(input));
+console.log(flattenObject(input, ""));
 /*
 Expected Output:
 {
